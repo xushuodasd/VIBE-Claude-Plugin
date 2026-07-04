@@ -37,7 +37,7 @@ description: Use this skill to execute backend development tasks following the V
 
 ### 前置步骤：产物检查
 1. **检查项目开发阶段**：
-   - 查看`./.trae/rules/kaifa.md`文件，确认当前项目开发阶段
+   - 查看`./.vibe/stage.md`文件，确认当前项目开发阶段
    - 如果开发阶段未设定，提示用户先确认项目开发阶段
 
 2. **检查后端开发文档与API接口文档**：

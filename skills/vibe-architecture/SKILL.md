@@ -49,7 +49,7 @@ description: Use this skill to design the technical architecture, including tech
    - 识别项目的核心业务逻辑
 
 2. **分析项目目录结构**：
-   - 分析`.trae/`目录下的开发规则
+   - 分析`.vibe/`目录下的开发规则
    - 分析`doc/`目录下的工作流程文档
    - 理解项目的组织方式和设计思路
 

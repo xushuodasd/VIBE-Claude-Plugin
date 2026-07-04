@@ -2,6 +2,17 @@
   "name": "vibe-claude-plugin",
   "version": "1.0.0",
   "description": "VIBE 24/7 Autonomous Multi-Agent Framework for Claude Code",
-  "author": "xushuodasd",
-  "license": "MIT"
+  "author": {
+    "name": "xushuodasd"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/xushuodasd/VIBE-Claude-Plugin",
+  "repository": "https://github.com/xushuodasd/VIBE-Claude-Plugin",
+  "keywords": [
+    "claude-code",
+    "plugin",
+    "workflow",
+    "autopilot",
+    "skills"
+  ]
 }

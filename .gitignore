@@ -26,5 +26,9 @@ node_modules/
 # Git
 .git/
 
-# Claude Code 
+# Claude Code
 .claude/
+.orphaned_at
+
+# VIBE working research folders (created during skill dev, safe to delete)
+.research/

@@ -49,12 +49,12 @@ description: Use this skill to update project status and documents at the end of
    - 如果前后端阶段不一致，提示用户先完成未完成的阶段
 
 ### 第一步：读取当前开发阶段
-1. **读取kaifa.md文件**：
-   - 读取`./.trae/rules/kaifa.md`文件
+1. **读取 stage.md 文件**：
+   - 读取`./.vibe/stage.md`文件
    - 确定当前项目的开发阶段
 
 2. **读取开发计划文档**：
-   - 读取`./项目文档/开发计划/项目阶段开发计划总览.md`
+   - 读取`./.vibe/docs/plan/overview.md`
    - 了解项目整体的阶段划分和顺序
 
 ### 第二步：更新开发阶段
@@ -69,7 +69,7 @@ description: Use this skill to update project status and documents at the end of
 
 ### 第三步：文档化
 1. **更新记录**：
-   - 在`./项目文档/开发计划/`目录下创建阶段更新记录
+   - 在`./.vibe/docs/plan/`目录下创建阶段更新记录
    - 记录阶段更新的时间、原因和相关信息
 
 ## 执行建议
@@ -77,12 +77,12 @@ description: Use this skill to update project status and documents at the end of
 2. **文档同步**：确保阶段日志和开发计划文档与实际开发进度保持同步
 3. **谨慎操作**：更新阶段信息时要谨慎，确保参考项目阶段开发计划总览文档确定下一阶段
 4. **及时通知**：阶段更新后，及时通知相关开发人员
-5. **版本控制**：对kaifa.md文件进行版本控制，保留历史记录
+5. **版本控制**：对 stage.md 文件进行版本控制，保留历史记录
 6. **文档参考**：严格参考项目阶段开发计划总览文档中的阶段顺序进行更新
 
 ## 成功标准
 1. 确认前后端都已完成当前阶段的开发任务
-2. 成功更新kaifa.md文件中的开发阶段信息
+2. 成功更新 stage.md 文件中的开发阶段信息
 3. 根据项目阶段开发计划总览文档正确确定并更新到下一阶段
 4. 生成阶段更新记录文档
 5. 为后续开发工作提供明确的阶段指导
@@ -90,11 +90,11 @@ description: Use this skill to update project status and documents at the end of
 ## 失败处理
 1. **阶段未完成**：如果前后端任何一方未完成当前阶段，暂停工作流，待完成后再继续
 2. **文件不存在**：如果必要的文件不存在，先创建文件或提示用户创建
-3. **更新失败**：如果更新kaifa.md文件失败，检查文件权限并重新尝试
+3. **更新失败**：如果更新 stage.md 文件失败，检查文件权限并重新尝试
 4. **文档不一致**：如果项目阶段开发计划总览文档与当前阶段信息不一致，提示用户检查文档
 
 ## 输出成果
-1. **更新后的kaifa.md文件** - 保存至`./.trae/rules/kaifa.md`
-2. **阶段更新记录** - 保存至`./项目文档/开发计划/阶段更新记录.md`
+1. **更新后的 stage.md 文件** - 保存至`./.vibe/stage.md`
+2. **阶段更新记录** - 保存至`./.vibe/docs/plan/stage-update-log.md`
 
 记住，及时更新开发阶段信息对于项目的顺利进行至关重要。通过本工作流的执行，确保项目开发阶段的准确标识，为后续开发工作提供清晰的指导。

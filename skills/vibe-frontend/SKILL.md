@@ -42,11 +42,11 @@ description: Use this skill to execute frontend development tasks following the 
 
 ### 前置步骤：准备工作
 1. **检查项目阶段**：
-   - 查看`./.trae/rules/kaifa.md`文件，确认当前项目开发阶段
+   - 查看`./.vibe/stage.md`文件，确认当前项目开发阶段
    - 如果阶段未设定，提示用户先执行项目阶段开发计划工作流
 
 2. **检查API设计规范**：
-   - 确认`./doc/workflaw/API规则文档设计工作流.md`文件是否存在
+   - 确认`./.vibe/workflows/api-rules.md`文件是否存在
    - 读取API设计规范文档，了解API调用要求
 
 3. **检查前端目录**：

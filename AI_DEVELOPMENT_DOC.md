@@ -36,18 +36,33 @@ vibe-claude-plugin/
 
 ## 2. 踩坑记录与避坑指南
 
-### 2.1 坑点：Claude Code 技能加载路径问题
+### 2.1 坑点：技能包安装不等于插件安装
+- **问题描述**：把 `skills/` 单独复制到 `~/.claude/skills`，只能让部分技能被自然语言命中，不能保证 `commands/` 下的 slash command 生效，因此 `/vibe` 可能完全不会出现。
+- **解决方案**：
+  1. VIBE 必须按**标准插件**安装到 `~/.claude/plugins/vibe-claude-plugin`。
+  2. 安装内容必须包含整个仓库，至少包括 `.claude-plugin/`、`commands/`、`skills/`。
+  3. 安装完成后必须彻底重启 Claude Code，并先用 `/plugins` 检查插件是否已经被真正加载。
+
+### 2.2 坑点：slash command 文件格式与本地状态文件污染
+- **问题描述**：
+  1. `commands/vibe.md` 如果使用了不兼容的 frontmatter 形式，可能导致 Claude Code 不注册 `/vibe`。
+  2. `.orphaned_at` 这类本地插件状态文件如果被误提交进仓库，会让插件看起来像“孤儿副本”，增加加载异常风险。
+- **解决方案**：
+  1. `commands/*.md` 采用纯 Markdown 说明文档格式，和本机已验证可用的插件命令保持一致。
+  2. 将 `.orphaned_at` 加入 `.gitignore`，禁止提交到仓库。
+
+### 2.3 坑点：Claude Code 技能加载路径问题
 - **问题描述**：Claude Code 在识别自定义 skill 时，强依赖于目录结构和 `SKILL.md` 的存在。如果结构嵌套过深，或者 `---` 头部元数据缺失，将导致技能无法加载。
 - **解决方案**：确保所有的技能都在 `skills/` 的一级子目录下（如 `skills/vibe-test/SKILL.md`），并且每个 `SKILL.md` 都有标准的 YAML Frontmatter（包含 `name` 和 `description`）。
 
-### 2.2 坑点：前端动画与“果汁感”实现的性能问题
+### 2.4 坑点：前端动画与“果汁感”实现的性能问题
 - **问题描述**：在执行 `vibe-ui-beautify` 时，大量使用 CSS 动画或 JavaScript 物理引擎可能导致掉帧或卡顿，特别是与复杂的 3D 渲染结合时。
 - **解决方案**：
   1. 优先使用硬件加速属性（如 `transform` 和 `opacity`）进行动画处理。
   2. 对于弹簧阻尼等物理反馈，推荐使用 `Framer Motion`，并开启 `layout` 或 `will-change` 优化。
   3. 注意在低端设备上进行降级处理。
 
-### 2.3 坑点：多模块联动的上下文遗忘
+### 2.5 坑点：多模块联动的上下文遗忘
 - **问题描述**：在 24 小时全链路不间断编程中，AI 在进行到后期（如部署、交付）时，容易遗忘早期（如需求分析、架构设计）的约束条件。
 - **解决方案**：
   在工作流的前置步骤中，强制要求 AI **读取并检查先前的产物文档**（如 PRD、架构设计文档），以此重新加载上下文。

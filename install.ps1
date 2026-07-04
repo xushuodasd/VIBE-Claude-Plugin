@@ -1,22 +1,41 @@
 # install.ps1
-# VIBE-Claude-Plugin Installation Script for Windows
+# VIBE-Claude-Plugin standard plugin installer for Windows
 
 $PluginDir = $PSScriptRoot
-$SkillsDir = Join-Path $PluginDir "skills"
-$TargetDir = Join-Path $env:USERPROFILE ".claude\skills"
+$PluginsRoot = Join-Path $env:USERPROFILE ".claude\plugins"
+$TargetDir = Join-Path $PluginsRoot "vibe-claude-plugin"
 
-Write-Host "Installing VIBE-Claude-Plugin..." -ForegroundColor Cyan
+Write-Host "Installing VIBE-Claude-Plugin as a Claude Code plugin..." -ForegroundColor Cyan
 
-# Create target directory if it doesn't exist
-if (-Not (Test-Path $TargetDir)) {
-    New-Item -ItemType Directory -Force -Path $TargetDir | Out-Null
-    Write-Host "Created directory: $TargetDir" -ForegroundColor Green
+if (-Not (Test-Path $PluginsRoot)) {
+    New-Item -ItemType Directory -Force -Path $PluginsRoot | Out-Null
+    Write-Host "Created plugins directory: $PluginsRoot" -ForegroundColor Green
 }
 
-# Copy skills
-Write-Host "Copying skills from $SkillsDir to $TargetDir" -ForegroundColor Cyan
-Copy-Item -Path "$SkillsDir\*" -Destination $TargetDir -Recurse -Force
+if (Test-Path $TargetDir) {
+    Remove-Item -Path $TargetDir -Recurse -Force
+    Write-Host "Removed existing plugin directory: $TargetDir" -ForegroundColor Yellow
+}
+
+New-Item -ItemType Directory -Force -Path $TargetDir | Out-Null
+
+$itemsToCopy = @(
+    ".claude-plugin",
+    "commands",
+    "skills",
+    "README.md",
+    "LICENSE",
+    "AI_DEVELOPMENT_DOC.md",
+    "使用手册.md"
+)
+
+foreach ($item in $itemsToCopy) {
+    $source = Join-Path $PluginDir $item
+    if (Test-Path $source) {
+        Copy-Item -Path $source -Destination $TargetDir -Recurse -Force
+    }
+}
 
 Write-Host "Installation completed successfully!" -ForegroundColor Green
-Write-Host "You can now use the VIBE skills in Claude Code." -ForegroundColor Yellow
-Write-Host "Restart Claude Code to apply the changes." -ForegroundColor Yellow
+Write-Host "Plugin path: $TargetDir" -ForegroundColor Green
+Write-Host "Please restart Claude Code, then run /plugins to verify or use /vibe directly." -ForegroundColor Yellow
