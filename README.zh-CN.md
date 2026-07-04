@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>中文</strong> | <a href="./README.md">English</a>
+  <a href="./README.md">English</a> | <strong>简体中文</strong>
 </p>
 
 <p align="center">
