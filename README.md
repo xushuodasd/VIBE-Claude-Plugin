@@ -44,11 +44,10 @@ git clone https://github.com/xushuodasd/VIBE-Claude-Plugin.git ~/.claude/plugins
 
 **对于 Windows 用户 (CMD 或 PowerShell)：**
 ```powershell
-# 1. 先确保目录存在
-mkdir %USERPROFILE%\.claude\plugins
-
-# 2. 克隆项目到该目录下
-git clone https://github.com/xushuodasd/VIBE-Claude-Plugin.git %USERPROFILE%\.claude\plugins\vibe-claude-plugin
+# 1. 先创建插件目录
+mkdir "%USERPROFILE%\.claude\plugins" 2>nul
+# 2. 将项目克隆到插件目录
+git clone https://github.com/xushuodasd/VIBE-Claude-Plugin.git "%USERPROFILE%\.claude\plugins\vibe-claude-plugin"
 ```
 
 克隆完成后，**重启你的 Claude Code** 即可生效。
