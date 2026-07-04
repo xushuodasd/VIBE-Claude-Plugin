@@ -4,13 +4,13 @@
         "name": "xushuodasd"
     },
     "metadata": {
-        "description": "VIBE 24/7 Autonomous Multi-Agent Framework for Claude Code - 让 Claude Code 变身 24 小时无人值守的虚拟软件公司"
+        "description": "Document-driven autonomous engineering workflow for Claude Code"
     },
     "plugins": [
         {
             "name": "vibe-claude-plugin",
             "source": "./",
-            "description": "VIBE 24/7 Autonomous Multi-Agent Framework for Claude Code",
+            "description": "Document-driven autonomous engineering workflow for Claude Code",
             "author": {
                 "name": "xushuodasd"
             },

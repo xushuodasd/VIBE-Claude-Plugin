@@ -153,6 +153,7 @@ vibe-claude-plugin/
 ├── skills/
 ├── README.md
 ├── README.zh-CN.md
+├── CHANGELOG.md
 ├── 使用手册.md
 └── AI_DEVELOPMENT_DOC.md
 ```
@@ -179,6 +180,7 @@ Before promoting this heavily, it helps to be explicit about the limits:
 
 ## Documentation
 
+- [Changelog](./CHANGELOG.md)
 - [Contributing](./CONTRIBUTING.md)
 - [Demo Assets](./DEMO_ASSETS.md)
 - [Marketing Copy](./MARKETING_COPY.md)

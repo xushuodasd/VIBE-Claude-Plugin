@@ -1,30 +1,30 @@
 # /vibe Command
 
-启动 VIBE 24 小时自动驾驶开发引擎。
+Start the VIBE autonomous engineering workflow.
 
 ## Usage
 
 ```bash
-/vibe <你的项目需求>
+/vibe <your project requirement>
 ```
 
 ## What This Command Does
 
-用户调用了 `/vibe` 指令时：
+When a user runs `/vibe`, the command should:
 
-1. 立即触发 `vibe-autopilot` 技能。
-2. 先进入需求分析与架构规划阶段，与用户沟通并生成 PRD、架构文档、数据库文档和 `tasks.md`。
-3. 在用户确认开始后，进入全自动执行阶段，按照以下闭环工作流持续运行：
-   - 需求分析
-   - 架构设计
-   - 任务拆解
-   - 循环编码（最小模块、子任务隔离）
-   - 测试
-   - 安全审查
-   - UI 美化
-   - 交付
-4. 开发阶段尽量不打断用户，优先按最优解自动推进。
+1. Trigger the `vibe-autopilot` skill.
+2. Start with requirement analysis and architecture planning, then generate artifacts such as the PRD, architecture notes, database notes, and `tasks.md`.
+3. After the user approves the plan, continue through the execution loop:
+   - requirement analysis
+   - architecture design
+   - task breakdown
+   - iterative implementation with isolated sub-tasks
+   - testing
+   - security review
+   - UI polish
+   - delivery
+4. During execution, minimize interruptions and keep moving with the best available option.
 
 ## If No Requirement Is Provided
 
-如果用户只输入 `/vibe`，请主动开始需求沟通，询问项目目标、核心功能、技术栈偏好和 UI 风格。
+If the user only types `/vibe`, begin requirement discovery. Ask about the project goal, core features, preferred stack, and UI direction.
