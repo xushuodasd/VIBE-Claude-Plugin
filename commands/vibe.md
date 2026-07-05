@@ -1,3 +1,8 @@
+---
+name: vibe
+description: Start the VIBE autonomous engineering workflow. Clarifies requirements, plans architecture, breaks work into tasks, and drives autonomous delivery.
+---
+
 # /vibe Command
 
 Start the VIBE autonomous engineering workflow.
@@ -22,6 +27,7 @@ When a user runs `/vibe`, the command should:
    - testing
    - security review
    - UI polish
+   - E2E real browser verification
    - delivery
 4. During execution, minimize interruptions and keep moving with the best available option.
 
