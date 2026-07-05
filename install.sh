@@ -19,7 +19,7 @@ fi
 
 mkdir -p "$TARGET_DIR"
 
-for item in ".claude-plugin" "commands" "skills" "scripts" "VERSION" "README.md" "LICENSE" "AI_DEVELOPMENT_DOC.md" "使用手册.md"; do
+for item in ".claude-plugin" "commands" "skills" "scripts" "VERSION" "README.md" "README.zh-CN.md" "LICENSE" "CHANGELOG.md" "AI_DEVELOPMENT_DOC.md" "使用手册.md"; do
   if [ -e "$PLUGIN_DIR/$item" ]; then
     cp -r "$PLUGIN_DIR/$item" "$TARGET_DIR/"
   fi

@@ -95,6 +95,7 @@ vibe-claude-plugin/
   读取 tasks.md 中每个 [ ] 任务：
   ├─ vibe-ui-design   → 建立设计系统（前端任务前置）
   ├─ vibe-frontend / vibe-backend → 最小模块编码
+  ├─ vibe-assets      → 素材获取（图标/字体/图片，前端骨架完成后）
   ├─ vibe-test        → TDD 红→绿→重构（3次失败熔断）
   ├─ vibe-security    → 安全扫描（工具缺失自动安装）
   ├─ vibe-review      → 代码审查（含 UI 质量检查）
@@ -372,7 +373,7 @@ vibe-claude-plugin/
    - 换思路 + WebSearch 搜索解决方案 + 简化需求
    - 二次仍失败才标记 `[Needs Human]`，在交付报告中详细说明
 
-4. **vibe-assets 新技能（第 25 个技能）**
+4. **vibe-assets 新技能（1.5 清单编号 18，技能总数 25）**
    - 素材获取矩阵：图标(Lucide)/字体(Google Fonts)/图片(Unsplash)/插画(Lottie)/Logo(SVG生成)
    - 禁止 placeholder 占位图、emoji 图标、系统默认字体
    - 10 节完整工作流 + 检查清单 + 与其他技能的协作矩阵

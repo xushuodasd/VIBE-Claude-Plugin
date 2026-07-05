@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **vibe-autopilot**: Sections 6-8 added without modifying sections 1-5. Existing workflow logic preserved.
 - **Skills total**: 24 → 25 (corrected vibe-file-list omission in prior lists).
 - **README.md / README.zh-CN.md**: Updated skill count to 25, added vibe-assets to sub-command table.
+- **install.ps1 / install.sh**: Now also copy `CHANGELOG.md` and `README.zh-CN.md` for complete local documentation.
+- **AI_DEVELOPMENT_DOC.md**: Added pitfall 2.21 documenting the vibe-file-list omission root cause and the three-place sync rule for future skill additions.
 
 ## [2.0.0] - 2026-07-04
 

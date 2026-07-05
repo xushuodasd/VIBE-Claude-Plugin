@@ -26,7 +26,9 @@ $itemsToCopy = @(
     "scripts",
     "VERSION",
     "README.md",
+    "README.zh-CN.md",
     "LICENSE",
+    "CHANGELOG.md",
     "AI_DEVELOPMENT_DOC.md",
     "使用手册.md"
 )
