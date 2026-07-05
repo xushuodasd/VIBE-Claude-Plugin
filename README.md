@@ -140,18 +140,87 @@ Restart Claude Code and verify the plugin is loaded:
 
 ## Usage
 
-Start the workflow with `/vibe`. The slash command is the public entry point. Internally, it triggers the `vibe-autopilot` engine.
+### Main Entry Point
+
+Start the full workflow with `/vibe`. This is the command you will use most of the time.
 
 ```bash
 /vibe Build a dark-mode SaaS admin panel with Node.js, PostgreSQL, role-based access control, tests, and deployment docs.
 ```
 
-If you run `/vibe` without a full requirement, the workflow should begin with requirement discovery and planning.
+If you run `/vibe` with only a rough idea, it will ask follow-up questions until the requirement is buildable, then move through planning, coding, testing, security review, and delivery automatically.
 
-For fewer approval interruptions during execution, start Claude Code with trust enabled:
+For fewer approval interruptions during long-running execution, start Claude Code with trust enabled:
 
 ```bash
 claude --trust
+```
+
+### When to Use Sub-Commands
+
+Most of the time `/vibe` is enough. The sub-commands below are useful when you want to run one stage in isolation or take manual control of a specific step.
+
+| Command | Use When You Want To... |
+|---|---|
+| `/vibe-analyze-req` | Analyze requirements for a brand-new project and produce a PRD |
+| `/vibe-analyze-new` | Add a new feature to an existing project |
+| `/vibe-architecture` | Design the overall architecture and deployment strategy |
+| `/vibe-database` | Design the database schema and ER diagram |
+| `/vibe-framework` | Define the technical framework and non-functional requirements |
+| `/vibe-api-rules` | Establish RESTful API conventions |
+| `/vibe-plan` | Generate a phased development plan and `tasks.md` from existing docs |
+| `/vibe-frontend` | Implement frontend modules against existing API contracts |
+| `/vibe-backend` | Implement backend modules against existing API contracts |
+| `/vibe-test` | Write or run unit/integration tests |
+| `/vibe-review` | Review code quality, structure, and standards compliance |
+| `/vibe-security` | Run security scans (semgrep, gitleaks, dependency audit, OWASP Top 10) |
+| `/vibe-ui-design` | Produce a visual design system and tokens |
+| `/vibe-ui-beautify` | Add micro-interactions, animations, and polish |
+| `/vibe-integrate` | Connect frontend and backend and run end-to-end API checks |
+| `/vibe-e2e` | Launch the real application in a browser and verify every page and button |
+| `/vibe-api-docs` | Generate API documentation from code |
+| `/vibe-startup` | Write project startup documentation |
+| `/vibe-deploy` | Write deployment and operations documentation |
+| `/vibe-bug-tracker` | Record and triage bugs |
+| `/vibe-stage-update` | Update project stage status after a phase completes |
+| `/vibe-ai-workflow` | Create a new AI workflow SOP |
+
+### Common Examples
+
+**Start a complete project from one sentence:**
+
+```bash
+/vibe Build a personal todo app with a dark industrial UI, SQLite, and user login.
+```
+
+**Plan before coding:**
+
+```bash
+/vibe-plan I have the PRD and API docs; create the tasks.md for the MVP.
+```
+
+**Implement only the frontend after APIs are defined:**
+
+```bash
+/vibe-frontend Implement the user profile page using ./docs/api/users.md.
+```
+
+**Add tests to existing code:**
+
+```bash
+/vibe-test Write unit tests for UserService until coverage reaches 80%.
+```
+
+**Run a security scan before release:**
+
+```bash
+/vibe-security Scan the current project for OWASP Top 10 issues.
+```
+
+**Verify the real running UI before calling it done:**
+
+```bash
+/vibe-e2e Open the browser and verify every page renders and every button works.
 ```
 
 ## How The Workflow Runs

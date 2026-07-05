@@ -133,23 +133,87 @@ git clone https://github.com/xushuodasd/VIBE-Claude-Plugin.git ~/.claude/plugins
 
 ## 如何使用
 
-对外的启动命令是 `/vibe`。内部真正负责自动驾驶的是 `vibe-autopilot`。这两个名字不要混淆：
+### 主入口
 
-- `/vibe`：用户输入的斜杠命令
-- `vibe-autopilot`：被 `/vibe` 调起的自动驾驶工作流
-
-示例：
+最常用的命令就是 `/vibe`。内部由 `vibe-autopilot` 引擎负责执行。
 
 ```bash
 /vibe 帮我做一个深色风格的 SaaS 管理后台，后端用 Node.js 和 PostgreSQL，要有 RBAC、测试和部署文档。
 ```
 
-如果你只输入 `/vibe`，系统会先进入需求沟通阶段。
+如果你只输入 `/vibe` 或者描述比较粗略，系统会先主动问你问题，把需求聊清楚，然后再进入计划、编码、测试、安全审查和交付。
 
 为了减少执行过程中的权限打断，建议用信任模式启动 Claude Code：
 
 ```bash
 claude --trust
+```
+
+### 子命令速查表
+
+大部分场景用 `/vibe` 就够了。下面的子命令适合在特定环节单独调用：
+
+| 命令 | 用途 |
+|---|---|
+| `/vibe-analyze-req` | 新项目需求分析，输出 PRD |
+| `/vibe-analyze-new` | 已有项目新增功能分析 |
+| `/vibe-architecture` | 设计整体架构与部署方案 |
+| `/vibe-database` | 设计数据库表结构与 ER 图 |
+| `/vibe-framework` | 定义技术框架与非功能性设计 |
+| `/vibe-api-rules` | 制定 RESTful API 规范 |
+| `/vibe-plan` | 根据已有文档生成 `tasks.md` 开发计划 |
+| `/vibe-frontend` | 按 API 契约实现前端模块 |
+| `/vibe-backend` | 按 API 契约实现后端模块 |
+| `/vibe-test` | 编写或运行单元/集成测试 |
+| `/vibe-review` | 代码审查，检查质量与规范 |
+| `/vibe-security` | 安全扫描（semgrep/gitleaks/依赖审计/OWASP Top 10） |
+| `/vibe-ui-design` | 输出视觉设计系统与设计令牌 |
+| `/vibe-ui-beautify` | 注入微交互与动画 |
+| `/vibe-integrate` | 前后端联调与 API 对接测试 |
+| `/vibe-e2e` | 启动真实浏览器，逐页逐按钮验证 |
+| `/vibe-api-docs` | 从代码生成 API 文档 |
+| `/vibe-startup` | 编写项目启动文档 |
+| `/vibe-deploy` | 编写部署与运维文档 |
+| `/vibe-bug-tracker` | 记录与分类 Bug |
+| `/vibe-stage-update` | 更新项目阶段状态 |
+| `/vibe-ai-workflow` | 创建新的 AI 工作流 SOP |
+
+### 常用示例
+
+**从一个想法开始完整项目：**
+
+```bash
+/vibe 帮我做一个深色工业风的待办 App，用 SQLite，支持用户登录。
+```
+
+**先出计划再开发：**
+
+```bash
+/vibe-plan 我已经有 PRD 和 API 文档了，生成 MVP 的 tasks.md。
+```
+
+**只写前端：**
+
+```bash
+/vibe-frontend 根据 ./docs/api/users.md 实现用户资料页。
+```
+
+**补测试：**
+
+```bash
+/vibe-test 给 UserService 写单元测试，覆盖率要到 80%。
+```
+
+**交付前安全扫描：**
+
+```bash
+/vibe-security 对当前项目做一次 OWASP Top 10 扫描。
+```
+
+**交付前浏览器验证：**
+
+```bash
+/vibe-e2e 打开浏览器，验证每个页面都能渲染、每个按钮都能点。
 ```
 
 ## 工作流怎么跑
