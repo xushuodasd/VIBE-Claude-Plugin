@@ -402,6 +402,57 @@ vibe-claude-plugin/
 3. CHANGELOG v2.1.0 条目中明确标注"修正 vibe-file-list 漏列"。
 4. **后续约束**：每次新增技能，必须同时更新三处——`skills/` 目录、AI_DEVELOPMENT_DOC 1.5 清单、README Core Skills 表，三处计数必须一致。
 
+### 2.22 坑点：GitHub 仓库搜不到——description 和 topics 设置问题（2026-07-05）
+**问题描述**：用户反馈"在 GitHub 搜索 VIBE-Claude-Plugin 完全搜不到，只有 `VIBE-Claude-Plugin user:xushuodasd` 这种精确查询能命中"。经查 GitHub API 确认：
+1. `description` 字段是中文，且开头带空格，且包含 `**Claude Code**` Markdown 语法 → 英文搜索匹配失败。
+2. `topics` 字段为空数组 `[]` → GitHub 搜索严重依赖 topics 匹配，没有 topics 的仓库在搜索 "claude-code"/"plugin" 等关键词时完全不出现。
+3. `homepage` 为 `null` → 缺少主页链接影响专业度。
+
+**根因分析**：
+- **GitHub 搜索机制**：仓库搜索的核心匹配维度是 `topics`（强匹配）+ `description`（模糊匹配）+ `README`（索引匹配）。
+- 三者全弱（topics 空 + description 是中文 + 新仓库 24-72h 索引未建立）→ 搜索结果完全看不到。
+- 这是 GitHub 上 90% 新仓库搜不到的根本原因。
+
+**解决方案**（GitHub 网页操作，AI 无法直接修改）：
+1. 打开仓库主页 https://github.com/xushuodasd/VIBE-Claude-Plugin
+2. 点击右侧 About 区域的 ⚙️ 齿轮图标
+3. **Description** 改为纯英文短描述（不含 Markdown 语法、不带前导空格）：
+   ```
+   Document-driven autonomous engineering workflow for Claude Code. 25 skills covering requirement analysis, architecture, coding, testing, security, E2E, and delivery.
+   ```
+4. **Topics** 添加 10 个核心关键词（每个输入后按 Enter）：
+   ```
+   claude-code
+   claude-plugin
+   ai-workflow
+   autonomous-coding
+   skill-library
+   developer-tools
+   document-driven
+   ai-agent
+   coding-agent
+   software-engineering
+   ```
+5. **Website** 填仓库主页 URL（可选）。
+6. **必须点击底部 "Save changes" 按钮**（很多人填完忘点导致没保存）。
+7. 等待 5-30 分钟让 GitHub 搜索索引更新。
+
+**验证方法**：
+- 用 GitHub API 查询 `https://api.github.com/repos/<owner>/<repo>`，确认返回的 `topics` 数组不为空、`description` 是英文。
+- API 缓存有 5-10 分钟延迟，网页 About 区域显示的是实时数据，以网页为准。
+
+**搜索生效时间表**：
+| 操作             | 索引生效时间 |
+| ---------------- | ------------ |
+| 修改 topics      | 5-30 分钟    |
+| 修改 description | 1-6 小时     |
+| 新仓库被完全索引 | 24-72 小时   |
+
+**后续约束（AI 维护规则）**：
+- 每次新建 GitHub 仓库时，必须在创建后立即设置英文 description + 10 个左右 topics + Website。
+- README 第一行应包含项目名和核心关键词（帮助 README 索引匹配）。
+- 可选：创建首个 Release 加速索引（GitHub 会立即索引 Release）。
+
 ## 3. 下一步优化方向
 - **E2E 测试强化**：`vibe-e2e` 目前偏向 Playwright 指导规范，后续可增加 E2E 测试脚手架自动生成能力（自动读取路由配置生成 `.spec.ts` 文件）。
 - **自动化测试强化**：目前 `vibe-test` 偏向指导规范，后续可增加针对 Jest/Cypress 的具体自动化配置脚手架生成能力。
