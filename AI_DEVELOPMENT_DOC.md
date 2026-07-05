@@ -303,8 +303,47 @@ vibe-claude-plugin/
 **问题描述**：在 `settings.json` 中配置了 `extraKnownMarketplaces`，但执行 `/plugin install vibe-claude-plugin@vibe` 仍然报 "Marketplace not found"。Claude Code 的 `/plugin install` 命令对自定义 Marketplace 的处理可能只认官方源。
 **解决方案**：
 1. 确保仓库根目录有 `.claude-plugin/marketplace.json`（注册 Marketplace）和 `.claude-plugin/plugin.json`（注册插件）。
-2. 如果 `/plugin install` 持续失败，采用手动注册方案：将插件文件复制到 `~/.claude/plugins/cache/` 下，并在 `installed_plugins.json` 和 `settings.json` 中手动注册。
-3. 推送 marketplace.json 到 GitHub 后需清除本地缓存 `~/.claude/plugins/marketplaces/vibe` 再重试。
+2. **最可靠方案：直接克隆到插件目录**。
+   ```powershell
+   # Windows
+   New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\plugins" | Out-Null
+   git clone https://github.com/xushuodasd/VIBE-Claude-Plugin.git "$env:USERPROFILE\.claude\plugins\vibe-claude-plugin"
+   ```
+   ```bash
+   # macOS/Linux
+   git clone https://github.com/xushuodasd/VIBE-Claude-Plugin.git ~/.claude/plugins/vibe-claude-plugin
+   ```
+3. 如果之前通过 Marketplace 安装过，Claude Code 可能在 `installed_plugins.json` 中留下了指向 cache 旧版本的记录（见 2.19），必须手动修正为本地目录路径。
+4. 重启 Claude Code 后用 `/plugins` 检查是否加载。
+
+### 2.19 坑点：installed_plugins.json 指向 cache 旧版本导致 /vibe 不生效（2026-07-04）
+**问题描述**：用户通过 `git clone` 把最新代码放到 `~/.claude/plugins/vibe-claude-plugin/`，但重启 Claude Code 后 `/vibe` 仍然报 `Unknown command`，而 `/vibe-plan` 等子 skill 却可用。排查发现 `~/.claude/plugins/installed_plugins.json` 中 `vibe-claude-plugin@vibe` 指向的是 `cache/vibe/vibe-claude-plugin/1.0.0/` 这个旧版本缓存，而不是本机更新的插件目录。Claude Code 实际加载的是 cache 里的旧代码，所以 commands/vibe.md 的修改不生效。
+
+**症状**：
+- `/vibe` → `Unknown command`
+- `/vibe-plan` 等子 skill 可用（说明插件部分加载）
+- 修改本地 `commands/vibe.md` 并重启后仍无效
+
+**解决方案**：
+1. 打开 `~/.claude/plugins/installed_plugins.json`。
+2. 找到 `vibe-claude-plugin@vibe` 条目，把 `installPath` 改为本地插件目录：
+   ```json
+   {
+     "scope": "user",
+     "installPath": "C:\\Users\\14028\\.claude\\plugins\\vibe-claude-plugin",
+     "version": "2.0.0",
+     "installedAt": "...",
+     "lastUpdated": "...",
+     "gitCommitSha": "d0facdd"
+   }
+   ```
+3. 确保 `settings.json` 中 `enabledPlugins` 包含 `"vibe-claude-plugin@vibe": true`。
+4. **完全退出 Claude Code 并重新打开**。
+5. 输入 `/plugins` 检查加载路径是否为本地目录。
+
+**预防措施**：
+- 优先使用 `git clone` 直接安装到 `~/.claude/plugins/vibe-claude-plugin/`，不走 Marketplace `/plugin install`。
+- 更新插件时，在插件目录执行 `git pull`，然后检查 `installed_plugins.json` 的 `installPath` 没有偷偷变回 cache 路径。
 
 ## 3. 下一步优化方向
 - **E2E 测试强化**：`vibe-e2e` 目前偏向 Playwright 指导规范，后续可增加 E2E 测试脚手架自动生成能力（自动读取路由配置生成 `.spec.ts` 文件）。
