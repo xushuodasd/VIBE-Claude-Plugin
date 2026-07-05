@@ -1,6 +1,6 @@
 # AI_DEVELOPMENT_DOC
 
-> **当前版本：2.0.0** | 版本号定义在 `VERSION` 文件和 `plugin.json` 中，单一来源为 `VERSION` 文件。
+> **当前版本：2.1.0** | 版本号定义在 `VERSION` 文件和 `plugin.json` 中，单一来源为 `VERSION` 文件。
 
 ## 文档目的
 本文档用于记录 VIBE-Claude-Plugin 框架开发过程中的架构设计、核心逻辑、踩坑记录及经验总结，以便于 AI 在后续开发或维护中参考，避免重复犯错。
@@ -37,7 +37,7 @@ vibe-claude-plugin/
   │   └── marketplace.json     # Marketplace 注册信息
   ├── commands/                # 斜杠命令
   │   └── vibe.md              # /vibe 入口命令
-  ├── skills/                  # 核心技能目录（23个）
+  ├── skills/                  # 核心技能目录（25个）
   │   ├── vibe-autopilot/      # 24小时无人值守引擎
   │   ├── vibe-analyze-req/    # 全新项目需求分析
   │   ├── vibe-analyze-new/    # 已有项目新需求分析
@@ -55,6 +55,7 @@ vibe-claude-plugin/
   │   ├── vibe-review/         # 代码审查
   │   ├── vibe-ui-design/      # UI/UX 设计系统
   │   ├── vibe-ui-beautify/    # 动效与美化
+  │   ├── vibe-assets/         # 素材自动获取
   │   ├── vibe-e2e/            # 端到端真机验证
   │   ├── vibe-bug-tracker/    # Bug 追踪
   │   ├── vibe-stage-update/   # 阶段更新
@@ -114,7 +115,7 @@ vibe-claude-plugin/
   └─ 输出交付总结报告
 ```
 
-### 1.5 技能全清单（23个）
+### 1.5 技能全清单（25个）
 
 | #   | 技能              | 职能                   | 触发场景        |
 | --- | ----------------- | ---------------------- | --------------- |
@@ -135,12 +136,14 @@ vibe-claude-plugin/
 | 15  | vibe-review       | 代码审查（含 UI 质量） | 安全通过后      |
 | 16  | vibe-ui-design    | UI/UX 设计系统         | 前端编码前      |
 | 17  | vibe-ui-beautify  | 动效与美化             | review 通过后   |
-| 18  | vibe-e2e          | 端到端真机验证         | 交付前最后防线  |
-| 19  | vibe-bug-tracker  | Bug 追踪               | 交付期          |
-| 20  | vibe-stage-update | 阶段更新               | 阶段切换时      |
-| 21  | vibe-startup      | 启动文档               | 交付期          |
-| 22  | vibe-deploy       | 部署运维文档           | 交付期          |
-| 23  | vibe-ai-workflow  | 工作流生成器           | 创建新工作流    |
+| 18  | vibe-assets       | 素材自动获取           | 前端骨架完成后  |
+| 19  | vibe-e2e          | 端到端真机验证         | 交付前最后防线  |
+| 20  | vibe-bug-tracker  | Bug 追踪               | 交付期          |
+| 21  | vibe-stage-update | 阶段更新               | 阶段切换时      |
+| 22  | vibe-startup      | 启动文档               | 交付期          |
+| 23  | vibe-deploy       | 部署运维文档           | 交付期          |
+| 24  | vibe-file-list    | 文件清单规范           | 框架初始化时    |
+| 25  | vibe-ai-workflow  | 工作流生成器           | 创建新工作流    |
 
 ### 1.6 三大核心机制
 
@@ -297,7 +300,7 @@ vibe-claude-plugin/
 
 **联动改动**：
 - `vibe-autopilot/SKILL.md` 阶段三新增第 1 步"端到端真机验证"，在 `vibe-api-docs` 之前执行
-- 技能总数从 22 → 23
+- 技能总数从 23 → 24
 
 ### 2.18 Marketplace 安装问题与手动注册方案
 **问题描述**：在 `settings.json` 中配置了 `extraKnownMarketplaces`，但执行 `/plugin install vibe-claude-plugin@vibe` 仍然报 "Marketplace not found"。Claude Code 的 `/plugin install` 命令对自定义 Marketplace 的处理可能只认官方源。
@@ -331,7 +334,7 @@ vibe-claude-plugin/
    {
      "scope": "user",
      "installPath": "C:\\Users\\14028\\.claude\\plugins\\vibe-claude-plugin",
-     "version": "2.0.0",
+     "version": "2.1.0",
      "installedAt": "...",
      "lastUpdated": "...",
      "gitCommitSha": "d0facdd"
@@ -344,6 +347,59 @@ vibe-claude-plugin/
 **预防措施**：
 - 优先使用 `git clone` 直接安装到 `~/.claude/plugins/vibe-claude-plugin/`，不走 Marketplace `/plugin install`。
 - 更新插件时，在插件目录执行 `git pull`，然后检查 `installed_plugins.json` 的 `installPath` 没有偷偷变回 cache 路径。
+
+### 2.20 v2.1.0 并行调度与素材自动获取增强（2026-07-04）
+**问题描述**：v2.0.0 存在三个瓶颈：
+1. **串行执行**：autopilot 按任务清单顺序逐个执行，前端任务和后端任务不能同时进行，开发速度慢。
+2. **素材缺失**：前端页面用 placeholder 占位图、emoji 当图标、系统默认字体，交付质量像 demo。
+3. **Blocked 即死**：任务 3 次失败标记 Blocked 后永久跳过，不尝试恢复。
+
+**解决方案**：v2.1.0 新增五项能力，**不修改任何现有章节**（autopilot 新增 6-8 节，plan 末尾追加）：
+
+1. **vibe-autopilot 第 6 节：子智能体并行调度**
+   - 使用 Claude Code 的 Task 工具启动并行子智能体
+   - 并行决策树：无依赖→全部并行，部分依赖→分批并行，全串行→顺序执行
+   - 文件隔离规则：每个子智能体只改自己模块的文件
+   - 并行上限：5 个（Claude Code 限制）
+
+2. **vibe-autopilot 第 7 节：进度可视化面板**
+   - 每完成一个任务自动更新 `.vibe/progress.html`
+   - 用户随时在浏览器打开查看进度，不用盯终端
+   - 包含：总任务数/已完成/进行中/阻塞/进度条/任务表格
+
+3. **vibe-autopilot 第 8 节：错误自动恢复**
+   - 所有非 Blocked 任务完成后，对 Blocked 任务二次尝试
+   - 换思路 + WebSearch 搜索解决方案 + 简化需求
+   - 二次仍失败才标记 `[Needs Human]`，在交付报告中详细说明
+
+4. **vibe-assets 新技能（第 25 个技能）**
+   - 素材获取矩阵：图标(Lucide)/字体(Google Fonts)/图片(Unsplash)/插画(Lottie)/Logo(SVG生成)
+   - 禁止 placeholder 占位图、emoji 图标、系统默认字体
+   - 10 节完整工作流 + 检查清单 + 与其他技能的协作矩阵
+
+5. **vibe-plan API Mock 并行机制**
+   - 生成 `api-contract.json` 契约文件，前端用 Mock 开发，后端独立实现
+   - tasks.md 任务增加 `depends` 和 `parallel_group` 字段
+   - autopilot 读取 `parallel_group` 判断哪些任务可并行
+
+**联动改动**：
+- 技能总数：24 → 25（同时修正此前 vibe-file-list 在 1.5 清单中漏列的问题）
+- 版本号：2.0.0 → 2.1.0
+- 原有章节内容零改动
+
+### 2.21 坑点：技能清单长期漏列 vibe-file-list 导致计数失真（2026-07-05）
+**问题描述**：v2.0.0 升级时新增了 `vibe-e2e` 技能，文档统一表述为"22 → 23"。但实际上 `skills/` 目录里一直存在 `vibe-file-list` 技能（提供 `.vibe/` 目录文件清单规范），却从未被写入 AI_DEVELOPMENT_DOC 1.5 节的"技能全清单"和 README 的 Core Skills 表。这导致：
+1. 实际目录技能数与文档计数长期相差 1。
+2. v2.1.0 新增 `vibe-assets` 后，文档误写"23 → 24"，实际应是"24 → 25"。
+3. README.md Core Skills 表格已有 `vibe-file-list`，但 AI_DEVELOPMENT_DOC 1.5 清单缺失，两份文档互相矛盾。
+
+**根因**：技能新增时只更新了 README Core Skills 表（按"工作流"分类归组），没有同步更新 AI_DEVELOPMENT_DOC 1.5 节的编号清单。
+
+**解决方案**：
+1. AI_DEVELOPMENT_DOC 1.3 目录结构和 1.5 技能全清单均补入 `vibe-file-list`（编号 24）和 `vibe-assets`（编号 18）。
+2. 所有"23 个""24 个"统一改为"25 个"。
+3. CHANGELOG v2.1.0 条目中明确标注"修正 vibe-file-list 漏列"。
+4. **后续约束**：每次新增技能，必须同时更新三处——`skills/` 目录、AI_DEVELOPMENT_DOC 1.5 清单、README Core Skills 表，三处计数必须一致。
 
 ## 3. 下一步优化方向
 - **E2E 测试强化**：`vibe-e2e` 目前偏向 Playwright 指导规范，后续可增加 E2E 测试脚手架自动生成能力（自动读取路由配置生成 `.spec.ts` 文件）。

@@ -55,3 +55,125 @@ description: Use this skill when the user requests fully autonomous, 24/7 hands-
 
 ## 5. 启动指令示例
 当接收到类似 `开启全自动开发`、`autopilot`、`24小时不间断` 的指令时，立即进入此状态。
+
+## 6. 子智能体并行调度 (Parallel Subagent Orchestration)
+**核心原则：能并行就并行，不能并行才串行。** 使用 Claude Code 的 Task 工具启动子智能体，每个子智能体拥有独立上下文窗口，避免记忆污染。
+
+### 6.1 并行调度决策树
+```
+读取 tasks.md 当前阶段的任务清单
+    ↓
+分析任务间的依赖关系
+    ├─ 无依赖 → 全部并行启动
+    ├─ 部分依赖 → 分批并行（先并行执行无依赖的，再执行依赖项）
+    └─ 全串行依赖 → 顺序执行
+```
+
+### 6.2 并行调度模板
+**场景**：阶段二有 5 个任务，其中前端任务 A/B/C 互相独立，后端任务 X/Y 互相独立。
+
+**错误做法（串行）**：
+```
+任务A → 任务B → 任务C → 任务X → 任务Y（耗时长，上下文累积）
+```
+
+**正确做法（并行）**：
+```
+同一消息内启动多个 Task 工具调用：
+  ├── Task(subagent_type="general_purpose_task"): 前端任务A
+  ├── Task(subagent_type="general_purpose_task"): 前端任务B
+  ├── Task(subagent_type="general_purpose_task"): 前端任务C
+  ├── Task(subagent_type="general_purpose_task"): 后端任务X
+  └── Task(subagent_type="general_purpose_task"): 后端任务Y
+所有子智能体完成后：
+  → 合并代码
+  → 运行集成测试
+  → vibe-review 审查
+  → vibe-security 扫描
+```
+
+### 6.3 子智能体任务模板
+每个并行子智能体的任务描述必须包含：
+1. **身份声明**：你是 VIBE 流水线的前端/后端工程师
+2. **任务范围**：只实现 xxx 模块，不触碰其他模块
+3. **API 契约**：引用对应的 API 文档路径
+4. **设计令牌**：引用 vibe-ui-design 的 token 文件（前端任务）
+5. **完成后**：写代码 + 跑测试 + 报告结果
+
+### 6.4 并行安全规则
+- **文件隔离**：每个子智能体只能修改自己模块的文件，禁止跨模块修改
+- **共享文件只读**：API 文档、设计令牌、tasks.md 对子智能体是只读的
+- **合并冲突预防**：vibe-plan 在拆解任务时必须确保模块间文件不重叠
+- **并行上限**：同时并行的子智能体不超过 5 个（Claude Code 限制）
+
+## 7. 进度可视化面板 (Progress Dashboard)
+**原则：用户随时能看到进度，不用盯终端。**
+
+### 7.1 进度文件生成
+每完成一个任务后，更新 `.vibe/progress.html`：
+
+```html
+<!DOCTYPE html>
+<html>
+<head><title>VIBE Progress</title></head>
+<body>
+  <h1>VIBE 自动驾驶进度</h1>
+  <div class="summary">
+    <div class="stat">总任务: 15</div>
+    <div class="stat done">已完成: 8</div>
+    <div class="stat active">进行中: 2</div>
+    <div class="stat blocked">阻塞: 1</div>
+    <div class="stat pending">待执行: 4</div>
+    <div class="progress-bar"><div class="fill" style="width: 53%"></div></div>
+  </div>
+  <table>
+    <tr><th>任务</th><th>类型</th><th>状态</th><th>耗时</th></tr>
+    <tr><td>用户接口-注册</td><td>后端</td><td>✅</td><td>2m</td></tr>
+    <tr><td>登录页面</td><td>前端</td><td>🔄</td><td>1m</td></tr>
+    <tr><td>JWT 鉴权</td><td>后端</td><td>⛔ Blocked</td><td>5m</td></tr>
+  </table>
+</body>
+</html>
+```
+
+### 7.2 更新规则
+- 每完成一个任务 → 更新 `progress.html`
+- 每开始一个任务 → 状态改为 🔄
+- 每标记 Blocked → 状态改为 ⛔ + 原因
+- 用户可随时在浏览器打开 `.vibe/progress.html` 查看进度
+
+## 8. 错误自动恢复 (Auto-Recovery)
+**原则：Blocked 不是终点，是暂停。**
+
+### 8.1 二次尝试机制
+当所有其他任务完成后，对 `[Blocked]` 任务进行二次尝试：
+
+1. **换思路**：不复用之前的代码，从零开始换一种实现方案
+2. **搜索参考**：用 WebSearch 搜索类似问题的解决方案
+3. **简化需求**：如果原需求过于复杂，降级为最小可行版本
+4. **二次失败**：标记为 `[Needs Human]`，在交付报告中详细说明
+
+### 8.2 恢复流程
+```
+所有非 Blocked 任务完成
+    ↓
+扫描 tasks.md 中的 [Blocked] 任务
+    ↓
+对每个 Blocked 任务：
+  ├─ 分析失败原因（读取 tasks.md 中的记录）
+  ├─ WebSearch 搜索解决方案
+  ├─ 换一种实现思路重写
+  ├─ 跑测试验证
+  ├─ 通过 → 标记 [x]，继续下一个
+  └─ 仍失败 → 标记 [Needs Human]
+    ↓
+所有任务处理完毕 → 进入阶段三交付
+```
+
+### 8.3 交付报告中的 Blocked 说明
+对于最终仍标记为 `[Needs Human]` 的任务，交付报告必须包含：
+- 任务名称
+- 失败原因（技术细节）
+- 已尝试的方案列表
+- 建议的人工解决方向
+- 相关文件路径

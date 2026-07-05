@@ -169,6 +169,7 @@ claude --trust
 | `/vibe-security` | 安全扫描（semgrep/gitleaks/依赖审计/OWASP Top 10） |
 | `/vibe-ui-design` | 输出视觉设计系统与设计令牌 |
 | `/vibe-ui-beautify` | 注入微交互与动画 |
+| `/vibe-assets` | 自动获取图片、图标、字体、插画、Logo |
 | `/vibe-integrate` | 前后端联调与 API 对接测试 |
 | `/vibe-e2e` | 启动真实浏览器，逐页逐按钮验证 |
 | `/vibe-api-docs` | 从代码生成 API 文档 |
@@ -263,6 +264,9 @@ vibe-claude-plugin/
 | 质量保障 | `vibe-test` / `vibe-review` | 测试与代码审查 |
 | 安全审查 | `vibe-security` | 安全检查 |
 | 视觉体验 | `vibe-ui-design` / `vibe-ui-beautify` | UI 设计与动效美化 |
+| 素材获取 | `vibe-assets` | 真实图标/字体/图片/插画/Logo 自动获取 |
+| 真机验证 | `vibe-e2e` | Playwright 浏览器逐页逐按钮验证 |
+| 工作流 | `vibe-ai-workflow` / `vibe-file-list` | 工作流生成与文件清单规范 |
 
 ## 当前边界
 

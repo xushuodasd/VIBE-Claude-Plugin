@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.1.0] - 2026-07-04
+
+### Added
+
+- **vibe-assets skill (NEW)**: Automatic asset acquisition. Fetches icons (Lucide/Iconify), fonts (Google Fonts), images (Unsplash API), illustrations (LottieFiles), and generates SVG logos. Bans placeholder images, emoji icons, and system-default fonts. Skills total: 24 → 25 (also corrected vibe-file-list omission in prior skill lists).
+- **vibe-autopilot parallel subagent orchestration (Section 6)**: Explicit instructions for using Claude Code's Task tool to launch parallel sub-agents. Includes parallel decision tree, task template, file isolation rules, and 5-subagent concurrency limit.
+- **vibe-autopilot progress dashboard (Section 7)**: Auto-generates `.vibe/progress.html` after each task completion. Users can open it in a browser to see real-time progress, task status, and blocked items without watching the terminal.
+- **vibe-autopilot auto-recovery (Section 8)**: Blocked tasks get a second chance after all other tasks complete. AI searches for solutions, tries alternative approaches, and only marks as `[Needs Human]` if the second attempt also fails.
+- **vibe-plan API Mock parallel mechanism**: Generates `api-contract.json` and `server.json` alongside `tasks.md`. Frontend develops with Mock, backend develops independently, integration happens last. Tasks now include `depends` and `parallel_group` fields for autopilot parallel scheduling.
+
+### Changed
+
+- **vibe-plan output**: Now generates 5 outputs instead of 3 (added Mock contract and server config).
+- **vibe-autopilot**: Sections 6-8 added without modifying sections 1-5. Existing workflow logic preserved.
+- **Skills total**: 24 → 25 (corrected vibe-file-list omission in prior lists).
+- **README.md / README.zh-CN.md**: Updated skill count to 25, added vibe-assets to sub-command table.
+
 ## [2.0.0] - 2026-07-04
 
 ### Added

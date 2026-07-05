@@ -10,8 +10,8 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Compatible-7B61FF?style=for-the-badge&logo=anthropic" alt="Claude Code" />
-  <img src="https://img.shields.io/badge/Skills-23-blue.svg?style=for-the-badge" alt="23 Skills" />
-  <img src="https://img.shields.io/badge/Version-2.0.0-orange.svg?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Skills-25-blue.svg?style=for-the-badge" alt="25 Skills" />
+  <img src="https://img.shields.io/badge/Version-2.1.0-orange.svg?style=for-the-badge" alt="Version" />
   <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License" />
   <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen.svg?style=for-the-badge" alt="PRs Welcome" />
 </p>
@@ -75,7 +75,7 @@ It is not a fit if you only want a lightweight prompt pack or a single-shot code
 - Routes execution into the `vibe-autopilot` engine
 - Turns incomplete ideas into structured requirements through guided questioning
 - Breaks delivery into requirement analysis, architecture, planning, coding, testing, security review, E2E verification, UI work, and handoff
-- Uses a skill-based structure under `skills/` with **23 specialized skills**
+- Uses a skill-based structure under `skills/` with **25 specialized skills**
 - Keeps the workflow grounded in generated docs such as PRD, architecture notes, API docs, and `tasks.md`
 - Auto-installs security tools (semgrep, gitleaks, pip-audit) when missing
 - Opens a real browser with Playwright to verify every page and button before delivery
@@ -176,6 +176,7 @@ Most of the time `/vibe` is enough. The sub-commands below are useful when you w
 | `/vibe-security` | Run security scans (semgrep, gitleaks, dependency audit, OWASP Top 10) |
 | `/vibe-ui-design` | Produce a visual design system and tokens |
 | `/vibe-ui-beautify` | Add micro-interactions, animations, and polish |
+| `/vibe-assets` | Fetch real images, icons, fonts, illustrations, and logos |
 | `/vibe-integrate` | Connect frontend and backend and run end-to-end API checks |
 | `/vibe-e2e` | Launch the real application in a browser and verify every page and button |
 | `/vibe-api-docs` | Generate API documentation from code |
@@ -254,7 +255,7 @@ After approval, the workflow moves through the engineering loop:
 4. deployment and ops documentation
 5. bug tracking and delivery summary
 
-## Core Skills (23)
+## Core Skills (25)
 
 | Area | Skill | Purpose |
 | --- | --- | --- |
@@ -270,6 +271,7 @@ After approval, the workflow moves through the engineering loop:
 | E2E Verification | `vibe-e2e` | Real browser verification with Playwright |
 | UI Design | `vibe-ui-design` | Design system with 15+ styles, industry palettes, UX guidelines |
 | UI Polish | `vibe-ui-beautify` | Motion design with WebFetch-powered animation references |
+| Asset Acquisition | `vibe-assets` | Real icons, fonts, images, illustrations, logos from CDN/AI |
 | Delivery | `vibe-startup` / `vibe-deploy` / `vibe-bug-tracker` / `vibe-stage-update` | Documentation and handoff |
 | Workflow | `vibe-ai-workflow` / `vibe-file-list` | Workflow generation and file conventions |
 
@@ -302,6 +304,30 @@ After approval, the workflow moves through the engineering loop:
 - Includes React Three Fiber integration for 3D scenes
 - Performance-first: 60fps required, 3 failed attempts trigger circuit breaker
 
+### Parallel Sub-Agent Orchestration
+- Uses Claude Code's Task tool to launch parallel sub-agents
+- Frontend and backend modules develop simultaneously
+- API Mock contracts enable true parallel development
+- Up to 5 concurrent sub-agents with file isolation
+
+### Progress Dashboard
+- Auto-generates `.vibe/progress.html` after each task
+- Open in browser to see real-time progress without watching terminal
+- Shows completed / in-progress / blocked / pending counts and progress bar
+
+### Auto-Recovery for Blocked Tasks
+- Blocked tasks get a second chance after all other tasks complete
+- AI searches for solutions and tries alternative approaches
+- Only marks as `[Needs Human]` if the second attempt also fails
+
+### Real Asset Acquisition
+- Fetches icons from Lucide / Iconify (CDN)
+- Loads fonts from Google Fonts with performance optimization
+- Gets images from Unsplash API by keyword
+- Downloads Lottie animations for empty states and loading
+- Generates SVG logos and favicons
+- Bans placeholder images, emoji icons, and system-default fonts
+
 ## Repository Structure
 
 ```text
@@ -311,7 +337,7 @@ vibe-claude-plugin/
 │   └── marketplace.json     # Marketplace registration
 ├── commands/                # Slash commands
 │   └── vibe.md              # /vibe entry command
-├── skills/                  # 23 specialized skills
+├── skills/                  # 25 specialized skills
 ├── scripts/                 # Tool installation scripts
 │   ├── security-setup.ps1   # Windows security tools
 │   └── security-setup.sh    # macOS/Linux security tools

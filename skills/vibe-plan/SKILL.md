@@ -164,5 +164,115 @@ description: Use this skill to create a phased development plan based on require
 1. **前端各个阶段的开发要求文档** - 保存至`./项目文档/开发计划/前端开发文档（前端开发计划）.md`
 2. **后端各个阶段的开发要求文档** - 保存至`./项目文档/开发计划/后端开发文档（后端开发计划）.md`
 3. **项目阶段开发计划总览文档** - 保存至`./项目文档/开发计划/项目阶段开发计划总览.md`
+4. **API Mock 契约文件** - 保存至`./mock/api-contract.json`（用于前后端并行开发）
+5. **Mock Server 配置** - 保存至`./mock/server.json`（前端独立开发的 Mock 配置）
 
 记住，一个好的项目阶段开发计划能够为项目的顺利进行提供清晰的指导，确保项目按时、高质量地完成。
+
+## API Mock 并行机制 (Parallel Development via Mock)
+
+### 核心原则
+**前后端不互相等待。** vibe-plan 在生成 tasks.md 的同时，必须生成 API Mock 契约文件，让前端用 Mock 开发，后端独立实现真实接口，最后联调。
+
+### Mock 契约文件格式 (api-contract.json)
+```json
+{
+  "version": "1.0.0",
+  "baseUrl": "/api/v1",
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/users",
+      "description": "获取用户列表",
+      "request": {
+        "query": { "page": "number", "limit": "number" }
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "data": [
+            { "id": 1, "name": "Alice", "email": "alice@example.com" }
+          ],
+          "total": 1
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/users",
+      "description": "创建用户",
+      "request": {
+        "body": { "name": "string", "email": "string", "password": "string" }
+      },
+      "response": {
+        "status": 201,
+        "body": { "id": 2, "name": "Bob", "email": "bob@example.com" }
+      }
+    }
+  ]
+}
+```
+
+### Mock 文件生成规则
+1. 每个 API 端点必须有：method, path, request, response
+2. response.body 必须是**真实可用的示例数据**，不是空对象
+3. 错误响应也要定义（400/401/403/404/500）
+4. 数据类型用 string/number/boolean/array/object 标注
+
+### 前端使用 Mock 的方式
+```bash
+# 方式一：MSW (Mock Service Worker) - 推荐
+npm install msw --save-dev
+npx msw init public/
+
+# 方式二：json-server - 快速原型
+npx json-server ./mock/api-contract.json --port 3001
+```
+
+### tasks.md 中的并行标记
+vibe-plan 在生成 tasks.md 时，必须为每个任务标注依赖关系，让 autopilot 能判断哪些可以并行：
+
+```markdown
+## 阶段一：MVP
+
+### 后端任务（可并行）
+- [ ] [BE-01] 用户注册接口 POST /api/v1/users/register
+  - depends: none
+  - parallel_group: backend-phase1
+- [ ] [BE-02] 用户登录接口 POST /api/v1/users/login
+  - depends: none
+  - parallel_group: backend-phase1
+
+### 前端任务（可并行，使用 Mock）
+- [ ] [FE-01] 注册页面
+  - depends: mock
+  - parallel_group: frontend-phase1
+  - mock: ./mock/api-contract.json#/users/register
+- [ ] [FE-02] 登录页面
+  - depends: mock
+  - parallel_group: frontend-phase1
+  - mock: ./mock/api-contract.json#/users/login
+
+### 联调任务（依赖前后端都完成）
+- [ ] [INT-01] 注册流程联调
+  - depends: [BE-01, FE-01]
+  - parallel_group: integration
+```
+
+### 并行执行时序
+```
+时间轴 ──────────────────────────────────────→
+
+后端：  [BE-01 注册] ────────┐
+后端：  [BE-02 登录] ────────┤
+                            ├── 联调 [INT-01] ──→
+前端：  [FE-01 注册页] ──────┤
+前端：  [FE-02 登录页] ──────┘
+        ↑ 用 Mock，不等后端
+```
+
+### 与 autopilot 并行调度的联动
+autopilot 读取 `parallel_group` 字段：
+- 同一 `parallel_group` 的任务 → 用 Task 工具并行启动子智能体
+- 不同 `parallel_group` 的任务 → 按依赖顺序执行
+- `depends: [BE-01, FE-01]` → 等两个依赖都完成才执行
