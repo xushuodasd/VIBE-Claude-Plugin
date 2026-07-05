@@ -1,7 +1,19 @@
 # AI_DEVELOPMENT_DOC
 
+> **当前版本：2.0.0** | 版本号定义在 `VERSION` 文件和 `plugin.json` 中，单一来源为 `VERSION` 文件。
+
 ## 文档目的
 本文档用于记录 VIBE-Claude-Plugin 框架开发过程中的架构设计、核心逻辑、踩坑记录及经验总结，以便于 AI 在后续开发或维护中参考，避免重复犯错。
+
+## 版本管理规范
+- **版本号来源**：仓库根目录的 `VERSION` 文件是版本号的**单一来源（Single Source of Truth）**，只包含一行 `MAJOR.MINOR.PATCH`。
+- **同步位置**：`plugin.json` 的 `version` 字段必须与 `VERSION` 文件保持一致。
+- **语义化版本（SemVer）**：
+  - `MAJOR`：不兼容的架构变更（如新增技能、删除技能、工作流重大调整）
+  - `MINOR`：向后兼容的功能增强（如技能内新增章节、新增配置项）
+  - `PATCH`：Bug 修复、文档修正、兼容性修复
+- **版本查询**：用户问"vibe 版本"时，AI 读取 `VERSION` 文件回答。
+- **发布流程**：每次发布时更新 `VERSION` → 同步 `plugin.json` → 更新 `CHANGELOG.md` → 提交并推送。
 
 ## 1. 核心架构与逻辑
 本插件参考了 `superpowers` 的设计模式，将软件工程生命周期拆解为多个独立的、可由 Claude Code 自动触发的 Skill 模块。

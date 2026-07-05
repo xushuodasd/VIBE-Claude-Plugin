@@ -24,6 +24,7 @@ $itemsToCopy = @(
     "commands",
     "skills",
     "scripts",
+    "VERSION",
     "README.md",
     "LICENSE",
     "AI_DEVELOPMENT_DOC.md",
