@@ -93,7 +93,14 @@ description: Use this skill to perform code reviews, checking for quality, secur
    - 检查代码是否符合前端编码规范和最佳实践
    - 检查代码的可维护性和可扩展性
 
-5. **测试验证**：
+5. **UI 质量检查**（参照 `vibe-ui-design` 第 17 节 Pre-Delivery Checklist）：
+   - 视觉规范：颜色/间距/圆角/阴影是否全用 token，无硬编码
+   - 交互规范：hover/active/disabled 三态是否完整，hover 不改布局
+   - 可访问性：对比度≥4.5:1，键盘可达，焦点可见
+   - 响应式：375px/768px/1440px 三档布局不破
+   - 一致性：Button/Input/Card/Modal 是否全用组件库，无原生标签
+
+6. **测试验证**：
    - 对前端功能进行测试
    - 验证功能是否符合需求
    - 测试API调用是否正常

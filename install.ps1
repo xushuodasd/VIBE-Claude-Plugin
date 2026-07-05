@@ -23,6 +23,7 @@ $itemsToCopy = @(
     ".claude-plugin",
     "commands",
     "skills",
+    "scripts",
     "README.md",
     "LICENSE",
     "AI_DEVELOPMENT_DOC.md",

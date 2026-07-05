@@ -445,3 +445,198 @@ DevTools → Performance → CPU throttling: "4x slowdown" → 重测，**还保
 ---
 
 **记住**：动效是 VIBE 全自动开发的"最后一公里"。一个没有动效的应用像一台没有阻尼的机器——能用，但让人不舒服；一个动效过度的应用像一个喝了 5 杯咖啡的同事——抓人注意力但让人抓狂。**克制的、物理直觉的、60fps 的动效**，才是"果汁感"的真谛。
+
+---
+
+## 16. 动画参考库 (Animation Reference Library)
+
+**当 PRD 要求高级视效（3D/粒子/着色器/背景特效）时，AI 必须先去以下参考网站学习具体实现，再写代码。** 不要凭记忆写复杂动画——去参考真实示例。
+
+### 16.1 参考网站速选矩阵
+
+| 需求场景 | 参考网站 | 依赖库 | 适合 |
+|---------|---------|-------|------|
+| **3D 场景/光照/几何体** | [ThreeJS Examples](https://threejs.org/examples/) | three.js | 3D 产品展示/数据可视化/游戏 |
+| **React 背景特效** | [ReactBits](https://reactbits.dev) | ogl / 自研 | Hero 背景/登录页/营销页 |
+| **顶级网站动效参考** | [Godly](https://godly.website) | 各种 | 找灵感/看行业标杆 |
+| **获奖动效网站** | [Awwwards](https://awwwards.com) | 各种 | 顶级创意/前沿设计 |
+| **CSS 动画灵感** | [Animista](https://animista.net) | 纯 CSS | 微交互/入场动画 |
+| **滚动动效灵感** | [GSAP Showcase](https://gsap.com/showcase/) | GSAP | 长页面/故事性滚动 |
+| **Lottie 动画** | [LottieFiles](https://lottiefiles.com) | lottie-web | 插画动画/加载动画/空状态 |
+
+### 16.2 AI 学习机制（WebFetch 工作流）
+
+**当遇到以下场景时，AI 必须先用 WebFetch 抓取参考网站内容，学习后再编码：**
+
+```
+场景触发 →
+├─ PRD 提到"3D"/"WebGL"/"粒子"/"光照" → 抓取 ThreeJS Examples
+├─ PRD 提到"流体背景"/"渐变动效"/"颗粒感" → 抓取 ReactBits
+├─ PRD 提到"滚动叙事"/"视差" → 抓取 GSAP Showcase
+├─ PRD 提到"插画动画"/"空状态动画" → 抓取 LottieFiles
+└─ 需要找设计灵感 → 抓取 Godly / Awwwards
+```
+
+**WebFetch 使用示例**：
+
+```
+# 抓取 ThreeJS 聚光灯示例
+WebFetch("https://threejs.org/examples/#webgpu_lights_spotlight")
+
+# 抓取 ReactBits 颗粒渐变背景
+WebFetch("https://reactbits.dev/backgrounds/grainient")
+
+# 抓取后 AI 必须分析：
+# 1. 这个效果用了什么技术？（ThreeJS/ogl/CSS/Canvas）
+# 2. 核心参数有哪些？（颜色/速度/扭曲/颗粒）
+# 3. 依赖什么库？（three/ogl/lottie-web）
+# 4. 性能影响如何？（是否需要 GPU 加速/是否会掉帧）
+# 5. 如何安装和集成？（npm 包名 + import 路径）
+```
+
+### 16.3 ThreeJS 动画库（3D 场景）
+
+**适用场景**：3D 产品展示、数据可视化、粒子系统、光照效果
+
+**常用示例分类**：
+
+| 分类 | 示例 URL | 用途 |
+|------|---------|------|
+| **光照** | `https://threejs.org/examples/#webgpu_lights_spotlight` | 聚光灯/点光源/环境光 |
+| **几何体** | `https://threejs.org/examples/webgl_geometry_cube.html` | 立方体/球体/地形 |
+| **粒子系统** | `https://threejs.org/examples/webgl_interactive_points.html` | 粒子云/星空/数据点 |
+| **着色器** | `https://threejs.org/examples/webgl_shaders_ocean.html` | 海洋/火焰/自定义效果 |
+| **动画** | `https://threejs.org/examples/webgl_animation_keyframes.html` | 关键帧/骨骼/变形 |
+| **相机控制** | `https://threejs.org/examples/webgl_controls_orbit.html` | 轨道/第一人称/飞越 |
+| **后期处理** | `https://threejs.org/examples/webgl_postprocessing.html` | 泛光/景深/色调映射 |
+
+**React 集成方式**：
+
+```bash
+# 安装 React Three Fiber（React 版 ThreeJS）
+npm install three @react-three/fiber @react-three/drei
+```
+
+```tsx
+// React Three Fiber 基础结构
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls, Spotlight } from '@react-three/drei'
+
+function Scene3D() {
+  return (
+    <Canvas>
+      <SpotLight
+        position={[5, 5, 5]}
+        angle={0.3}
+        penumbra={0.5}
+        intensity={2}
+        color="#00BFFF"
+      />
+      <mesh>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="#13171F" metalness={0.8} roughness={0.2} />
+      </mesh>
+      <OrbitControls />
+    </Canvas>
+  )
+}
+```
+
+### 16.4 ReactBits 动画组件库（背景特效）
+
+**适用场景**：Hero 背景渐变、登录页特效、营销页视觉冲击
+
+**核心组件**：
+
+| 组件 | URL | 效果 | 依赖 |
+|------|-----|------|------|
+| **Grainient** | `https://reactbits.dev/backgrounds/grainient` | 颗粒渐变背景（色彩流动+扭曲+噪点） | ogl |
+| **Threads** | `https://reactbits.dev/backgrounds/threads` | 线条编织背景 | ogl |
+| **Liquid** | `https://reactbits.dev/backgrounds/liquid` | 液体流动背景 | ogl |
+| **Waves** | `https://reactbits.dev/backgrounds/waves` | 波浪背景 | ogl |
+| **Particle** | `https://reactbits.dev/components/particles` | 粒子组件 | — |
+
+**Grainient 组件配置参数**（抓取自 ReactBits 官网）：
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|-------|------|
+| `color1` | string | `'#FF9FFC'` | 主渐变色 |
+| `color2` | string | `'#5227FF'` | 辅助渐变色 |
+| `color3` | string | `'#B497CF'` | 深层基色 |
+| `timeSpeed` | number | `0.25` | 动画速度倍率 |
+| `warpStrength` | number | `1.0` | 波浪扭曲强度 |
+| `warpFrequency` | number | `5.0` | 波浪频率 |
+| `grainAmount` | number | `0.1` | 胶片颗粒量 |
+| `contrast` | number | `1.5` | 对比度 |
+| `saturation` | number | `1.0` | 饱和度 |
+| `zoom` | number | `0.9` | 缩放级别 |
+
+**安装和使用**：
+
+```bash
+# ReactBits 组件依赖 ogl
+npm install ogl
+```
+
+```tsx
+// 从 ReactBits 复制组件代码（AI 通过 WebFetch 抓取后集成）
+// 或直接参考官网 Code 标签页的源码
+import Grainient from './components/Grainient'
+
+function HeroSection() {
+  return (
+    <div className="relative h-screen">
+      <Grainient
+        color1="#481414"
+        color2="#1f1b2f"
+        color3="#97b1df"
+        timeSpeed={0.25}
+        warpStrength={1}
+        grainAmount={0.1}
+      />
+      <div className="relative z-10 flex items-center justify-center h-full">
+        <h1 className="text-5xl font-bold text-white">Your Title</h1>
+      </div>
+    </div>
+  )
+}
+```
+
+### 16.5 场景匹配决策树
+
+```
+PRD 中的动效需求 →
+├─ "按钮反馈"/"卡片悬停"/"弹窗动画" → 第 5 节微交互配方库（CSS/Framer Motion）
+│
+├─ "3D 产品展示"/"旋转模型"/"光照" → ThreeJS + React Three Fiber
+│   └─ 先 WebFetch 抓取 threejs.org/examples 学习对应示例
+│
+├─ "流体背景"/"渐变动效"/"颗粒感" → ReactBits
+│   └─ 先 WebFetch 抓取 reactbits.dev 学习组件配置
+│
+├─ "滚动叙事"/"视差滚动"/"长页面动效" → GSAP + ScrollTrigger
+│   └─ 先 WebFetch 抓取 gsap.com/showcase 学习
+│
+├─ "插画动画"/"空状态"/"加载动画" → Lottie + LottieFiles
+│   └─ 先 WebFetch 抓取 lottiefiles.com 找合适动画
+│
+└─ "找灵感"/"看行业标杆" → Godly / Awwwards
+    └─ 先 WebFetch 抓取参考网站列表
+```
+
+### 16.6 WebFetch 学习后的 AI 行动规范
+
+**AI 通过 WebFetch 抓取参考网站后，必须执行以下步骤：**
+
+1. **分析技术栈**：确认用了什么库（three/ogl/gsap/lottie）
+2. **提取核心参数**：列出所有可配置参数及默认值
+3. **评估性能影响**：是否需要 GPU 加速？是否会掉帧？移动端能否运行？
+4. **安装依赖**：自动执行 `npm install` 安装所需库
+5. **集成代码**：将参考示例适配为项目的设计令牌（颜色/字体/间距对齐）
+6. **性能验证**：集成后必须跑 60fps 测试，掉帧则熔断
+
+**禁止行为**：
+- 禁止凭记忆写复杂 WebGL/着色器代码——必须先看参考
+- 禁止跳过 WebFetch 直接写——ThreeJS/ReactBits 的 API 会变
+- 禁止照搬不适配——参考示例的颜色必须换成项目的 design tokens
+- 禁止忽略性能——3D/背景特效必须在低端机测试，掉帧就降级或移除
